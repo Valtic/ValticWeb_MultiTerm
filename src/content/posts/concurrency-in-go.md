@@ -1,5 +1,5 @@
 ---
-title: 'Concurrency in Go'
+title: 'Concurrency in Go 2'
 published: 2025-07-04
 draft: false
 description: 'Explore how Go handles concurrency with goroutines and channels.'
@@ -25,7 +25,7 @@ func say(s string) {
 
 func main() {
     go say("world")
-    say("hello")
+    say("hello 2")
 }
 ```
 
