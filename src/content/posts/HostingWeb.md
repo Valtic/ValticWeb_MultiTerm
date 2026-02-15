@@ -15,8 +15,8 @@ tags: ['hosting']
 1. - Base de datos MySQL - db4free.net/ (para pruebas ) 
    Con Administracion de MyPHPAdmin
 
-2. - PHP - [https://googiehost.com/es/] (https://googiehost.com/es/)
+2. - PHP - [Googiehost.com](https://www.infinityfree.com/)
 
-3. - PHP -  [InfinityFree] (http://InfinityFree.com)
+3. - PHP -  [InfinityFree](https://www.InfinityFree.com)
 
-4. - MySQL - [Filess.io](www.Filess.io)
+4. - MySQL - [Filess.io](https://www.Filess.io)
