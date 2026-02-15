@@ -1,9 +1,9 @@
 ---
-title: "Python Small Scripts"
-published: 2025-11-12
+title: "Example Hosting Webs"
+published: 2026-02-15
 draft: false
-description: 'Collection of small scripts in python, for automate small task'
-tags: ['python']
+description: 'Coleccion of Paginas web y Hosting para pruebas
+tags: ['hosting']
 ---
 
 
