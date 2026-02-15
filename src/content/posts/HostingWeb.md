@@ -2,7 +2,7 @@
 title: "Example Hosting Webs"
 published: 2026-02-15
 draft: false
-description: 'Coleccion of Paginas web y Hosting para pruebas
+description: 'Coleccion of Paginas web y Hosting para pruebas'
 tags: ['hosting']
 ---
 
@@ -15,8 +15,8 @@ tags: ['hosting']
 1. - Base de datos MySQL - db4free.net/ (para pruebas ) 
    Con Administracion de MyPHPAdmin
 
-2. - PHP - https://googiehost.com/es/
+2. - PHP - [https://googiehost.com/es/] (https://googiehost.com/es/)
 
-3. - PHP -  InfinityFree
+3. - PHP -  [InfinityFree] (http://InfinityFree.com)
 
-4. - MySQL - Filess.io
+4. - MySQL - [Filess.io](www.Filess.io)
