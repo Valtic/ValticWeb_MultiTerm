@@ -16,8 +16,8 @@ Para los modelos vendidos desde Octubre, se esta presentando si se carga el firw
 Porque llevan un particionado de la memoria diferente y se queda bloqueado en un ciclo infinito de arranque.
 ( Aunque se puede conectar al puerto y Flashearlo, para recuperarlo )
 
-1. (Reddit - Ray5-stuck) [https://www.reddit.com/r/Longer3d/comments/1q9lyd9/ray5_20w_stuck_in_bootloader/]
-2. (Reddit - Lightburn no connect) [https://www.reddit.com/r/Longer3d/comments/1pna35e/lightburn_showing_busy_for_longer_ray_5/?share_id=ITHuEkucQhIzAAUdJh6Cp&utm_content=2&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=1]
-3. (Reddit - Restaurar Firmeware Screen) [https://www.reddit.com/r/Longer3d/comments/1plfzxf/longer_ray5_loading_screen_frozen_now_blank/]
+1. [Reddit - Ray5-stuck] (https://www.reddit.com/r/Longer3d/comments/1q9lyd9/ray5_20w_stuck_in_bootloader/)
+3. [Reddit - Lightburn no connect] (https://www.reddit.com/r/Longer3d/comments/1pna35e/lightburn_showing_busy_for_longer_ray_5/?share_id=ITHuEkucQhIzAAUdJh6Cp&utm_content=2&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=1)
+4. [Reddit - Restaurar Firmeware Screen] (https://www.reddit.com/r/Longer3d/comments/1plfzxf/longer_ray5_loading_screen_frozen_now_blank/)
 
 Add Notes.
