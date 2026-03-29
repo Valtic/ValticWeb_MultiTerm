@@ -1,11 +1,758 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CalcLab — Plataforma de Calculadoras</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="calclab.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalcLab — Plataforma de Calculadoras</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --bg: #0e0e0f;
+      --surface: #161618;
+      --surface2: #1e1e21;
+      --surface3: #252529;
+      --border: #2a2a2f;
+      --border2: #3a3a42;
+      --accent: #f0c040;
+      --accent2: #e08020;
+      --accent-dim: rgba(240,192,64,0.12);
+      --accent-dim2: rgba(240,192,64,0.06);
+      --text: #e8e8ec;
+      --text2: #9898a8;
+      --text3: #606070;
+      --green: #40c080;
+      --red: #e04040;
+      --blue: #4080e0;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+      --r: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID BG ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(240,192,64,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,192,64,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(14,14,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .logo-icon {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      clip-path: polygon(0 30%, 50% 0, 100% 30%, 100% 70%, 50% 100%, 0 70%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo span.dim { color: var(--text3); font-weight: 300; }
+
+    nav { display: flex; gap: 4px; }
+    .nav-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid transparent;
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: transparent;
+      color: var(--text2);
+    }
+    .nav-btn:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+    .nav-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+    .nav-btn.primary { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+    .nav-btn.primary:hover { background: #f8d060; }
+
+    /* ── PAGES ── */
+    .page { display: none; position: relative; z-index: 1; }
+    .page.active { display: block; }
+
+    /* ── DASHBOARD ── */
+    .dash-header {
+      padding: 48px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dash-header h1 {
+      font-family: var(--mono);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .dash-header h1 span { color: var(--accent); }
+    .dash-header p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text2);
+      font-weight: 300;
+    }
+
+    .dash-toolbar {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .search-box {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: 8px 12px 8px 36px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-box input:focus { border-color: var(--accent); }
+    .search-box::before {
+      content: '⌕';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .count-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      margin-left: auto;
+    }
+
+    .calcs-grid {
+      padding: 32px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .calc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .calc-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .calc-card:hover::before { opacity: 1; }
+
+    .calc-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .calc-card-name {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .calc-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .icon-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--r);
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text3);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .icon-btn.danger:hover { color: var(--red); border-color: var(--red); }
+
+    .calc-card-desc {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.6;
+      min-height: 36px;
+    }
+    .calc-card-meta {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .meta-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text3);
+    }
+    .meta-tag.in { border-color: rgba(64,128,224,0.4); color: var(--blue); background: rgba(64,128,224,0.08); }
+    .meta-tag.out { border-color: rgba(64,192,128,0.4); color: var(--green); background: rgba(64,192,128,0.08); }
+
+    .calc-card-date {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+    }
+
+    .empty-state {
+      padding: 80px 40px;
+      text-align: center;
+      color: var(--text3);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-family: var(--mono); font-size: 16px; color: var(--text2); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; line-height: 1.6; }
+
+    /* ── BUILDER PAGE ── */
+    .builder-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+
+    .builder-sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      border-bottom: 1px solid var(--border);
+      padding: 20px;
+    }
+    .sidebar-section-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .field-row { margin-bottom: 12px; }
+    .field-label {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text2);
+      margin-bottom: 5px;
+      display: block;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: 8px 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: var(--accent);
+    }
+    .field-textarea { resize: vertical; min-height: 60px; font-family: var(--sans); font-size: 12px; }
+    .field-select { cursor: pointer; }
+    option { background: var(--surface2); }
+
+    .count-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .count-btn {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      font-family: var(--mono);
+      line-height: 1;
+    }
+    .count-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .count-display {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .apply-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 4px;
+    }
+    .apply-btn:hover { background: #f8d060; transform: translateY(-1px); }
+    .apply-btn:active { transform: translateY(0); }
+    .apply-btn.secondary {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border2);
+      margin-top: 6px;
+    }
+    .apply-btn.secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .apply-btn.danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(224,64,64,0.3);
+    }
+    .apply-btn.danger:hover { background: rgba(224,64,64,0.1); }
+
+    /* ── BUILDER MAIN ── */
+    .builder-main {
+      padding: 32px 40px;
+      overflow-y: auto;
+    }
+
+    .builder-main-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .builder-main-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .fields-container { display: flex; flex-direction: column; gap: 12px; }
+
+    .field-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .field-card:hover { border-color: var(--border2); }
+    .field-card.output-card { border-left: 2px solid var(--green); }
+    .field-card.input-card { border-left: 2px solid var(--blue); }
+    .field-card.const-card { border-left: 2px solid var(--accent2); }
+
+    .field-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .field-card-index {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      min-width: 20px;
+    }
+    .field-card-type-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+    .badge-input { background: rgba(64,128,224,0.15); color: var(--blue); border: 1px solid rgba(64,128,224,0.3); }
+    .badge-output { background: rgba(64,192,128,0.15); color: var(--green); border: 1px solid rgba(64,192,128,0.3); }
+    .badge-const { background: rgba(224,128,32,0.15); color: var(--accent2); border: 1px solid rgba(224,128,32,0.3); }
+
+    .field-card-name-preview {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text2);
+      flex: 1;
+    }
+
+    .field-card-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .field-card-body .full { grid-column: 1 / -1; }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 0;
+    }
+    .checkbox-row input[type=checkbox] {
+      accent-color: var(--accent);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+    .checkbox-row span {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text2);
+    }
+
+    /* ── FORMULA EDITOR ── */
+    .formula-editor {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: 12px;
+    }
+    .formula-vars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .formula-var-chip {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      background: rgba(64,128,224,0.1);
+      border: 1px solid rgba(64,128,224,0.3);
+      border-radius: 2px;
+      color: var(--blue);
+      cursor: pointer;
+      transition: all 0.1s;
+      user-select: none;
+    }
+    .formula-var-chip:hover { background: rgba(64,128,224,0.2); }
+    .formula-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 10px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      transition: border-color 0.15s;
+    }
+    .formula-input:focus { border-color: var(--accent); }
+    .formula-hint {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--text3);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── CALCULATOR RUNNER ── */
+    .runner-page { padding: 40px; max-width: 680px; margin: 0 auto; }
+    .runner-title {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .runner-desc {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .runner-section-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .runner-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .runner-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+
+    .runner-field {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .runner-field.const-field { opacity: 0.7; }
+    .runner-field-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+    .runner-field-label small {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    .runner-field-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: 9px 12px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .runner-field-input:focus { border-color: var(--accent); }
+    .runner-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .runner-field-unit {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      min-width: 40px;
+    }
+
+    .runner-calculate-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .runner-calculate-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+    }
+    .runner-calculate-btn:hover { background: #f8d060; }
+    .runner-calculate-btn:hover::after { transform: translateX(100%); transition: transform 0.4s; }
+
+    .runner-outputs { display: flex; flex-direction: column; gap: 12px; }
+    .runner-output {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 6px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .runner-output.visible { opacity: 1; transform: translateY(0); }
+    .runner-output-label { font-size: 13px; color: var(--text2); }
+    .runner-output-value {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .runner-output-unit {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .runner-output-error { color: var(--red) !important; font-size: 13px !important; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast-msg {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      animation: slideIn 0.25s ease, fadeOut 0.4s 2.5s ease forwards;
+      pointer-events: auto;
+    }
+    .toast-msg.error { border-left-color: var(--red); }
+    .toast-msg.success { border-left-color: var(--green); }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateX(20px); } }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 28px;
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal h3 { font-family: var(--mono); font-size: 16px; margin-bottom: 10px; }
+    .modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .modal-btn {
+      padding: 8px 18px;
+      border-radius: var(--r);
+      border: 1px solid var(--border2);
+      font-family: var(--mono);
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--surface2);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .modal-btn.confirm { background: var(--red); border-color: var(--red); color: #fff; }
+    .modal-btn:hover { opacity: 0.85; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .builder-layout { grid-template-columns: 1fr; }
+      .builder-sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+      .calcs-grid { padding: 16px; }
+      .dash-header { padding: 24px 16px 16px; }
+      .dash-toolbar { padding: 12px 16px; }
+      .runner-page { padding: 20px 16px; }
+      .builder-main { padding: 20px 16px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -20,7 +767,6 @@
   </nav>
 </header>
 
-<!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
   <div class="dash-header">
     <h1>Mis <span>Calculadoras</span></h1>
@@ -36,12 +782,9 @@
   <div class="calcs-grid" id="calcs-grid"></div>
 </div>
 
-<!-- BUILDER -->
 <div class="page" id="page-builder">
   <div class="builder-layout">
-    <!-- Sidebar -->
     <div class="builder-sidebar">
-
       <div class="sidebar-section">
         <div class="sidebar-section-title">Información</div>
         <div class="field-row">
@@ -53,7 +796,6 @@
           <textarea class="field-textarea" id="calc-desc" placeholder="Describe para qué sirve..."></textarea>
         </div>
       </div>
-
       <div class="sidebar-section">
         <div class="sidebar-section-title">Entradas</div>
         <div class="count-controls">
@@ -63,7 +805,6 @@
           <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">campos</span>
         </div>
       </div>
-
       <div class="sidebar-section">
         <div class="sidebar-section-title">Salidas</div>
         <div class="count-controls">
@@ -73,49 +814,39 @@
           <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">resultados</span>
         </div>
       </div>
-
       <div class="sidebar-section">
         <div class="sidebar-section-title">Acciones</div>
         <button class="apply-btn" onclick="saveCalculator()">💾 Guardar Calculadora</button>
         <button class="apply-btn secondary" onclick="showPage('dashboard')">← Volver</button>
         <button class="apply-btn danger" id="delete-btn" onclick="deleteCurrentCalc()" style="display:none;margin-top:12px;">🗑 Eliminar calculadora</button>
       </div>
-
     </div>
-
-    <!-- Main -->
     <div class="builder-main">
       <div class="builder-main-title">Campos de entrada</div>
       <div class="fields-container" id="input-fields"></div>
-
       <div class="builder-main-title" style="margin-top:32px">Campos de salida</div>
       <div class="fields-container" id="output-fields"></div>
     </div>
   </div>
 </div>
 
-<!-- RUNNER -->
 <div class="page" id="page-runner">
   <div class="runner-page">
     <button class="nav-btn" onclick="showPage('dashboard')" style="margin-bottom:24px">← Volver</button>
     <div class="runner-title" id="runner-title"></div>
     <div class="runner-desc"  id="runner-desc"></div>
-
     <div class="runner-section-title">Datos de entrada</div>
     <div class="runner-fields" id="runner-inputs"></div>
-
     <button class="runner-calculate-btn" onclick="calculate()">⟶ Calcular</button>
-
     <div class="runner-section-title" id="runner-out-label" style="display:none">Resultados</div>
     <div class="runner-outputs" id="runner-outputs"></div>
   </div>
 </div>
 
-<!-- Modal confirm -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h3 id="modal-title">Confirmar acción</h3>
-    <p  id="modal-body">¿Estás seguro?</p>
+    <p id="modal-body">¿Estás seguro?</p>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeModal()">Cancelar</button>
       <button class="modal-btn confirm" id="modal-confirm">Eliminar</button>
@@ -125,6 +856,502 @@
 
 <div id="toast"></div>
 
-<script src="calclab.js"></script>
+<script>
+  // ─── STATE ───────────────────────────────────────────
+  let state = {
+    inputCount: 1,
+    outputCount: 1,
+    editingId: null
+  };
+
+  const STORE_KEY = 'calclab_calculators';
+
+  function getCalcs() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+    catch { return []; }
+  }
+  function saveCalcs(arr) { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); }
+
+  // ─── NAVIGATION ──────────────────────────────────────
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-btn[id^=nav-]').forEach(b => b.classList.remove('active'));
+    const nb = document.getElementById('nav-' + name);
+    if (nb) nb.classList.add('active');
+    if (name === 'dashboard') renderDashboard();
+    if (name === 'builder') renderBuilder();
+  }
+
+  // ─── DASHBOARD ───────────────────────────────────────
+  function renderDashboard() {
+    const calcs = getCalcs();
+    const query = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const filtered = query
+      ? calcs.filter(c => c.name.toLowerCase().includes(query) || (c.desc || '').toLowerCase().includes(query))
+      : calcs;
+
+    document.getElementById('calc-count').textContent =
+      `${filtered.length} calculadora${filtered.length !== 1 ? 's' : ''}`;
+    const grid = document.getElementById('calcs-grid');
+
+    if (!filtered.length) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">⊞</div>
+          <h3>${query ? 'Sin resultados' : 'Sin calculadoras'}</h3>
+          <p>${query
+            ? `No hay calculadoras que coincidan con "${query}".`
+            : 'Crea tu primera calculadora con el botón de arriba.'}</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(c => {
+      const ins  = c.inputs?.length  || 0;
+      const outs = c.outputs?.length || 0;
+      const date = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('es-ES') : '';
+      return `
+      <div class="calc-card" onclick="runCalculator('${c.id}')">
+        <div class="calc-card-header">
+          <div class="calc-card-name">${esc(c.name)}</div>
+          <div class="calc-card-actions" onclick="event.stopPropagation()">
+            <button class="icon-btn" title="Editar" onclick="editCalculator('${c.id}')">✎</button>
+            <button class="icon-btn danger" title="Eliminar" onclick="confirmDelete('${c.id}')">✕</button>
+          </div>
+        </div>
+        <div class="calc-card-desc">${esc(c.desc || 'Sin descripción.')}</div>
+        <div class="calc-card-meta">
+          <span class="meta-tag in">${ins} entrada${ins !== 1 ? 's' : ''}</span>
+          <span class="meta-tag out">${outs} salida${outs !== 1 ? 's' : ''}</span>
+        </div>
+        ${date ? `<div class="calc-card-date">Actualizada: ${date}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ─── BUILDER ─────────────────────────────────────────
+  function newCalculator() {
+    state.editingId = null;
+    state.inputCount  = 1;
+    state.outputCount = 1;
+    document.getElementById('calc-name').value = '';
+    document.getElementById('calc-desc').value = '';
+    document.getElementById('delete-btn').style.display = 'none';
+    showPage('builder');
+  }
+
+  function editCalculator(id) {
+    const calc = getCalcs().find(c => c.id === id);
+    if (!calc) return;
+    state.editingId   = id;
+    state.inputCount  = calc.inputs.length;
+    state.outputCount = calc.outputs.length;
+    document.getElementById('calc-name').value = calc.name;
+    document.getElementById('calc-desc').value = calc.desc || '';
+    document.getElementById('delete-btn').style.display = 'block';
+    showPage('builder');
+
+    setTimeout(() => {
+      calc.inputs.forEach((inp, i) => {
+        setVal(`in-name-${i}`,    inp.name);
+        setVal(`in-type-${i}`,    inp.type);
+        setVal(`in-unit-${i}`,    inp.unit);
+        setVal(`in-default-${i}`, inp.defaultValue || '');
+        const cb = document.getElementById(`in-const-${i}`);
+        if (cb) {
+          cb.checked = !!inp.constant;
+          toggleConst(i);
+        }
+      });
+      calc.outputs.forEach((out, i) => {
+        setVal(`out-name-${i}`,     out.name);
+        setVal(`out-unit-${i}`,     out.unit);
+        setVal(`out-formula-${i}`,  out.formula);
+        setVal(`out-decimals-${i}`, out.decimals ?? 2);
+      });
+    }, 50);
+  }
+
+  function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  function changeCount(type, delta) {
+    if (type === 'inputs') {
+      state.inputCount  = Math.max(1, Math.min(10, state.inputCount  + delta));
+    } else {
+      state.outputCount = Math.max(1, Math.min(8,  state.outputCount + delta));
+    }
+    renderBuilder();
+  }
+
+  function renderBuilder() {
+    document.getElementById('inputs-count').textContent  = state.inputCount;
+    document.getElementById('outputs-count').textContent = state.outputCount;
+    renderInputFields();
+    renderOutputFields();
+  }
+
+  function renderInputFields() {
+    const cont = document.getElementById('input-fields');
+    let html = '';
+    for (let i = 0; i < state.inputCount; i++) {
+      html += `
+      <div class="field-card input-card" id="incard-${i}">
+        <div class="field-card-header">
+          <span class="field-card-index">#${i + 1}</span>
+          <span class="field-card-type-badge badge-input">ENTRADA</span>
+          <span class="field-card-name-preview" id="in-preview-${i}">Campo ${i + 1}</span>
+        </div>
+        <div class="field-card-body">
+          <div>
+            <label class="field-label">Nombre del campo *</label>
+            <input class="field-input" id="in-name-${i}" placeholder="ej. Temperatura" oninput="updatePreview(${i})">
+          </div>
+          <div>
+            <label class="field-label">Tipo de dato</label>
+            <select class="field-select" id="in-type-${i}">
+              <option value="number">Número entero</option>
+              <option value="decimal">Número decimal</option>
+              <option value="text">Texto</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Unidad (opcional)</label>
+            <input class="field-input" id="in-unit-${i}" placeholder="ej. °C, kg, m/s">
+          </div>
+          <div>
+            <label class="field-label">Valor por defecto</label>
+            <input class="field-input" id="in-default-${i}" placeholder="ej. 0">
+          </div>
+          <div class="full">
+            <label class="checkbox-row">
+              <input type="checkbox" id="in-const-${i}" onchange="toggleConst(${i})">
+              <span>Campo constante (no editable por el usuario)</span>
+            </label>
+          </div>
+        </div>
+      </div>`;
+    }
+    cont.innerHTML = html;
+  }
+
+  function renderOutputFields() {
+    const inputNames = [];
+    for (let i = 0; i < state.inputCount; i++) {
+      const n = document.getElementById(`in-name-${i}`)?.value || `campo${i + 1}`;
+      inputNames.push({ label: n || `campo${i + 1}`, var: varName(n || `campo${i + 1}`) });
+    }
+
+    const cont = document.getElementById('output-fields');
+    let html = '';
+    for (let i = 0; i < state.outputCount; i++) {
+      const chips = inputNames.map(v =>
+        `<span class="formula-var-chip" onclick="insertVar(${i},'${v.var}')" title="${v.label}">${v.var}</span>`
+      ).join('');
+      html += `
+      <div class="field-card output-card">
+        <div class="field-card-header">
+          <span class="field-card-index">#${i + 1}</span>
+          <span class="field-card-type-badge badge-output">SALIDA</span>
+          <span class="field-card-name-preview" id="out-preview-${i}">Resultado ${i + 1}</span>
+        </div>
+        <div class="field-card-body">
+          <div>
+            <label class="field-label">Nombre del resultado *</label>
+            <input class="field-input" id="out-name-${i}" placeholder="ej. Temperatura en °F" oninput="updateOutPreview(${i})">
+          </div>
+          <div>
+            <label class="field-label">Unidad de salida</label>
+            <input class="field-input" id="out-unit-${i}" placeholder="ej. °F">
+          </div>
+          <div>
+            <label class="field-label">Decimales en resultado</label>
+            <select class="field-select" id="out-decimals-${i}">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="6">6</option>
+            </select>
+          </div>
+          <div class="full">
+            <label class="field-label">Fórmula de cálculo *</label>
+            <div class="formula-editor">
+              <div class="formula-vars">${chips}</div>
+              <textarea class="formula-input" id="out-formula-${i}" placeholder="ej. (temperatura * 9/5) + 32" rows="3"></textarea>
+              <div class="formula-hint">
+                Variables disponibles: ${inputNames.map(v => `<b style="color:var(--blue)">${v.var}</b>`).join(', ')}
+                — Usa operadores JS estándar: + − * / ** Math.sqrt() Math.round() etc.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+    cont.innerHTML = html;
+  }
+
+  function updatePreview(i) {
+    const n  = document.getElementById(`in-name-${i}`)?.value;
+    const el = document.getElementById(`in-preview-${i}`);
+    if (el) el.textContent = n || `Campo ${i + 1}`;
+    renderOutputFields();
+  }
+
+  function updateOutPreview(i) {
+    const n  = document.getElementById(`out-name-${i}`)?.value;
+    const el = document.getElementById(`out-preview-${i}`);
+    if (el) el.textContent = n || `Resultado ${i + 1}`;
+  }
+
+  function toggleConst(i) {
+    const cb   = document.getElementById(`in-const-${i}`);
+    const card = document.getElementById(`incard-${i}`);
+    if (!card) return;
+    card.classList.toggle('const-card', !!cb?.checked);
+    card.classList.toggle('input-card', !cb?.checked);
+    const badge = card.querySelector('.field-card-type-badge');
+    if (badge) {
+      badge.className   = 'field-card-type-badge ' + (cb?.checked ? 'badge-const' : 'badge-input');
+      badge.textContent = cb?.checked ? 'CONSTANTE' : 'ENTRADA';
+    }
+  }
+
+  function insertVar(outIdx, varN) {
+    const ta = document.getElementById(`out-formula-${outIdx}`);
+    if (!ta) return;
+    const pos  = ta.selectionStart;
+    ta.value   = ta.value.slice(0, pos) + varN + ta.value.slice(ta.selectionEnd);
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = pos + varN.length;
+  }
+
+  function varName(name) {
+    return name.trim()
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9_]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '') || 'campo';
+  }
+
+  // ─── SAVE ─────────────────────────────────────────────
+  function saveCalculator() {
+    const name = document.getElementById('calc-name').value.trim();
+    if (!name) { toast('El nombre es obligatorio', 'error'); return; }
+
+    const inputs = [];
+    for (let i = 0; i < state.inputCount; i++) {
+      const n = document.getElementById(`in-name-${i}`)?.value.trim();
+      if (!n) { toast(`Nombre de entrada #${i + 1} es obligatorio`, 'error'); return; }
+      inputs.push({
+        name:         n,
+        type:         document.getElementById(`in-type-${i}`)?.value    || 'number',
+        unit:         document.getElementById(`in-unit-${i}`)?.value.trim()    || '',
+        defaultValue: document.getElementById(`in-default-${i}`)?.value.trim() || '',
+        constant:     !!document.getElementById(`in-const-${i}`)?.checked,
+        varName:      varName(n)
+      });
+    }
+
+    const outputs = [];
+    for (let i = 0; i < state.outputCount; i++) {
+      const n = document.getElementById(`out-name-${i}`)?.value.trim();
+      const f = document.getElementById(`out-formula-${i}`)?.value.trim();
+      if (!n) { toast(`Nombre de salida #${i + 1} es obligatorio`, 'error'); return; }
+      if (!f) { toast(`Fórmula de salida #${i + 1} es obligatoria`,  'error'); return; }
+      outputs.push({
+        name:     n,
+        unit:     document.getElementById(`out-unit-${i}`)?.value.trim()  || '',
+        formula:  f,
+        decimals: parseInt(document.getElementById(`out-decimals-${i}`)?.value) || 2
+      });
+    }
+
+    const calcs = getCalcs();
+    if (state.editingId) {
+      const idx = calcs.findIndex(c => c.id === state.editingId);
+      if (idx >= 0) {
+        calcs[idx] = {
+          ...calcs[idx],
+          name,
+          desc: document.getElementById('calc-desc').value.trim(),
+          inputs,
+          outputs,
+          updatedAt: Date.now()
+        };
+      }
+      toast('Calculadora actualizada ✓', 'success');
+    } else {
+      calcs.push({
+        id:        'calc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        name,
+        desc:      document.getElementById('calc-desc').value.trim(),
+        inputs,
+        outputs,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+      toast('Calculadora creada ✓', 'success');
+    }
+    saveCalcs(calcs);
+    showPage('dashboard');
+  }
+
+  // ─── DELETE ───────────────────────────────────────────
+  let _deleteId = null;
+
+  function confirmDelete(id) {
+    _deleteId = id;
+    const calc = getCalcs().find(c => c.id === id);
+    document.getElementById('modal-title').textContent   = 'Eliminar calculadora';
+    document.getElementById('modal-body').textContent    = `¿Eliminar "${calc?.name}"? Esta acción no se puede deshacer.`;
+    document.getElementById('modal-confirm').onclick     = () => { doDelete(_deleteId); closeModal(); };
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function deleteCurrentCalc() {
+    if (!state.editingId) return;
+    confirmDelete(state.editingId);
+  }
+
+  function doDelete(id) {
+    saveCalcs(getCalcs().filter(c => c.id !== id));
+    toast('Calculadora eliminada', 'error');
+    showPage('dashboard');
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+  // ─── RUNNER ───────────────────────────────────────────
+  function runCalculator(id) {
+    const calc = getCalcs().find(c => c.id === id);
+    if (!calc) return;
+
+    document.getElementById('runner-title').textContent = calc.name;
+    document.getElementById('runner-desc').textContent  = calc.desc || '';
+
+    document.getElementById('runner-inputs').innerHTML = calc.inputs.map((inp, i) => {
+      const inputType = inp.type === 'text' ? 'text' : 'number';
+      const step      = inp.type === 'decimal' ? 'any' : inp.type === 'number' ? '1' : '';
+      return `
+      <div class="runner-field ${inp.constant ? 'const-field' : ''}">
+        <div class="runner-field-label">
+          ${esc(inp.name)}
+          <small>${inp.constant ? 'CONSTANTE' : inp.type.toUpperCase()}</small>
+        </div>
+        <input
+          class="runner-field-input"
+          id="run-in-${i}"
+          type="${inputType}"
+          ${step ? `step="${step}"` : ''}
+          value="${esc(inp.defaultValue || '')}"
+          ${inp.constant ? 'disabled' : ''}
+          placeholder="Introduce ${esc(inp.name).toLowerCase()}..."
+        >
+        <span class="runner-field-unit">${esc(inp.unit)}</span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('runner-outputs').innerHTML = calc.outputs.map((out, i) => `
+      <div class="runner-output" id="run-out-${i}">
+        <div class="runner-output-label">${esc(out.name)}</div>
+        <div>
+          <span class="runner-output-value" id="run-out-val-${i}">—</span>
+          <span class="runner-output-unit">${esc(out.unit)}</span>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('runner-out-label').style.display = 'none';
+    window._runningCalc = calc;
+    showPage('runner');
+  }
+
+  function calculate() {
+    const calc = window._runningCalc;
+    if (!calc) return;
+
+    const vars = {};
+    let hasError = false;
+
+    calc.inputs.forEach((inp, i) => {
+      const el = document.getElementById(`run-in-${i}`);
+      if (!el) return;
+      let val = el.value;
+      if (inp.type === 'number')  val = parseInt(val);
+      if (inp.type === 'decimal') val = parseFloat(val);
+      if (inp.type !== 'text' && isNaN(val)) {
+        toast(`"${inp.name}" necesita un valor numérico`, 'error');
+        hasError = true;
+      }
+      vars[inp.varName] = val;
+    });
+    if (hasError) return;
+
+    document.getElementById('runner-out-label').style.display = 'flex';
+
+    calc.outputs.forEach((out, i) => {
+      const el    = document.getElementById(`run-out-${i}`);
+      const valEl = document.getElementById(`run-out-val-${i}`);
+      el.classList.remove('visible');
+
+      try {
+        const fn     = new Function(...Object.keys(vars), `"use strict"; return (${out.formula});`);
+        const result = fn(...Object.values(vars));
+        if (typeof result === 'number' && isNaN(result)) throw new Error('NaN');
+        valEl.className   = 'runner-output-value';
+        valEl.textContent = typeof result === 'number' ? result.toFixed(out.decimals) : result;
+      } catch {
+        valEl.className   = 'runner-output-value runner-output-error';
+        valEl.textContent = 'Error en fórmula';
+      }
+
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    });
+  }
+
+  // ─── UTILS ────────────────────────────────────────────
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function toast(msg, type = '') {
+    const t = document.createElement('div');
+    t.className   = 'toast-msg ' + type;
+    t.textContent = msg;
+    document.getElementById('toast').appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  // ─── INIT ─────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!getCalcs().length) {
+      saveCalcs([{
+        id:   'calc_sample_001',
+        name: 'Conversión de Temperatura',
+        desc: 'Convierte grados Celsius a Fahrenheit y Kelvin.',
+        inputs: [
+          { name: 'Temperatura', type: 'decimal', unit: '°C', defaultValue: '0', constant: false, varName: 'temperatura' }
+        ],
+        outputs: [
+          { name: 'Fahrenheit', unit: '°F', formula: '(temperatura * 9/5) + 32', decimals: 2 },
+          { name: 'Kelvin',     unit: 'K',  formula: 'temperatura + 273.15',      decimals: 2 }
+        ],
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }]);
+    }
+    renderDashboard();
+    renderBuilder();
+  });
+</script>
 </body>
 </html>
