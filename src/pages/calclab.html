@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcLab — Plataforma de Calculadoras</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="calclab.css">
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="showPage('dashboard')">
+    <div class="logo-icon"></div>
+    CALC<span class="dim">LAB</span>
+  </div>
+  <nav>
+    <button class="nav-btn active" id="nav-dashboard" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-btn" id="nav-builder" onclick="newCalculator()">+ Nueva</button>
+  </nav>
+</header>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="dash-header">
+    <h1>Mis <span>Calculadoras</span></h1>
+    <p>Mini plataforma para crear y gestionar calculadoras personalizadas.</p>
+  </div>
+  <div class="dash-toolbar">
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Buscar calculadoras..." oninput="renderDashboard()">
+    </div>
+    <span class="count-badge" id="calc-count"></span>
+    <button class="nav-btn primary" onclick="newCalculator()">+ Crear nueva</button>
+  </div>
+  <div class="calcs-grid" id="calcs-grid"></div>
+</div>
+
+<!-- BUILDER -->
+<div class="page" id="page-builder">
+  <div class="builder-layout">
+    <!-- Sidebar -->
+    <div class="builder-sidebar">
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Información</div>
+        <div class="field-row">
+          <label class="field-label">Nombre de la calculadora *</label>
+          <input class="field-input" id="calc-name" type="text" placeholder="ej. Conversión de temperatura">
+        </div>
+        <div class="field-row">
+          <label class="field-label">Descripción</label>
+          <textarea class="field-textarea" id="calc-desc" placeholder="Describe para qué sirve..."></textarea>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Entradas</div>
+        <div class="count-controls">
+          <button class="count-btn" onclick="changeCount('inputs', -1)">−</button>
+          <span class="count-display" id="inputs-count">1</span>
+          <button class="count-btn" onclick="changeCount('inputs', 1)">+</button>
+          <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">campos</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Salidas</div>
+        <div class="count-controls">
+          <button class="count-btn" onclick="changeCount('outputs', -1)">−</button>
+          <span class="count-display" id="outputs-count">1</span>
+          <button class="count-btn" onclick="changeCount('outputs', 1)">+</button>
+          <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">resultados</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Acciones</div>
+        <button class="apply-btn" onclick="saveCalculator()">💾 Guardar Calculadora</button>
+        <button class="apply-btn secondary" onclick="showPage('dashboard')">← Volver</button>
+        <button class="apply-btn danger" id="delete-btn" onclick="deleteCurrentCalc()" style="display:none;margin-top:12px;">🗑 Eliminar calculadora</button>
+      </div>
+
+    </div>
+
+    <!-- Main -->
+    <div class="builder-main">
+      <div class="builder-main-title">Campos de entrada</div>
+      <div class="fields-container" id="input-fields"></div>
+
+      <div class="builder-main-title" style="margin-top:32px">Campos de salida</div>
+      <div class="fields-container" id="output-fields"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RUNNER -->
+<div class="page" id="page-runner">
+  <div class="runner-page">
+    <button class="nav-btn" onclick="showPage('dashboard')" style="margin-bottom:24px">← Volver</button>
+    <div class="runner-title" id="runner-title"></div>
+    <div class="runner-desc"  id="runner-desc"></div>
+
+    <div class="runner-section-title">Datos de entrada</div>
+    <div class="runner-fields" id="runner-inputs"></div>
+
+    <button class="runner-calculate-btn" onclick="calculate()">⟶ Calcular</button>
+
+    <div class="runner-section-title" id="runner-out-label" style="display:none">Resultados</div>
+    <div class="runner-outputs" id="runner-outputs"></div>
+  </div>
+</div>
+
+<!-- Modal confirm -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Confirmar acción</h3>
+    <p  id="modal-body">¿Estás seguro?</p>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal()">Cancelar</button>
+      <button class="modal-btn confirm" id="modal-confirm">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="calclab.js"></script>
+</body>
+</html>
