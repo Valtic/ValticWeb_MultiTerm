@@ -12,6 +12,8 @@ tags: ['Calculadoras','JavaScript']
 
 ## Dashboard
 
-1. - Acceso Dashboard- [MiWeb](https://github.com/Valtic/ValticWeb_MultiTerm/new/master/src/content/posts) 
+1. - Acceso Dashboard CalcLab - [CalcLab](https://valticpro.netlify.app/calclab/)
 
 2. - Turso - [Turso.tech](https://app.turso.tech/valtic/databases/calclab/data)
+
+Nota: En la version que hay colgada en la web, solo se ha incluido la version reducida, ya que esta pendiente de buscar un alojamiento correcto para esta web. ( Fuera de Astro )
