@@ -4,6 +4,9 @@ published: 2026-03-31
 draft: false
 description: 'Liberacion y publicacion de Web Calculadoras'
 tags: ['Calculadoras']
+coverImage:
+  src: '../assets/pantalla_incio.png'
+  alt: 'Pagina de muestras calculadoras'
 ---
 
 
