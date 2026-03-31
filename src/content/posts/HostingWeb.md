@@ -26,4 +26,4 @@ tags: ['hosting']
 
 7. - BBDD - [Turso](https://app.turso.tech/)
 
-8. - HTML - [Surge.sh] (surge.sh/)
+8. - HTML - [Surge.sh](surge.sh/)
