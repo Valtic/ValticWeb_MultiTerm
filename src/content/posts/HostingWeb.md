@@ -7,7 +7,6 @@ tags: ['hosting']
 ---
 
 
-
 # Paginas web y Hosting para pruebas
 
 ## Sitios de interes
@@ -24,3 +23,7 @@ tags: ['hosting']
 5. - PHP/MySql - [GIWS](https://www.giws.us/free-hosting)
 
 6. - JSON - [jsoneditoronline.org](https://jsoneditoronline.org/)
+
+7. - BBDD - [Turso](https://app.turso.tech/)
+
+8. - HTML - [Surge.sh] (surge.sh/)
