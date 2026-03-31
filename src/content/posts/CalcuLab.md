@@ -24,8 +24,7 @@ Las calculadoras quedan guardadas y accesibles para todos los usuarios.
 <!-- Usa una ruta de archivo relativa o un alias de importación -->
 ![Pagina de incio](../assets/pantalla_incio.png)
 
-Existe la verison de guardarlas en local.
-
+[blue]*Existe la verison de guardarlas en local.*
 En esta version la infomracion de las calculadoras se guarda en credenciales locales.
 [CalcuLaba Local](http://valtic.surge.sh/calclab)
 TODO: Funcion exportar/Importar la informacion a JSON, para rescatarla a otro navegador.
