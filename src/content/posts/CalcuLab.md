@@ -17,6 +17,7 @@ Las calculadoras quedan guardadas y accesibles para todos los usuarios.
 
 [CaluLab](http://valtic.surge.sh/calclab-turso)
 
+import { pantalla_incio } from 'astro:assets';
 Existe la verison de guardarlas en local.
 
 En esta version la infomracion de las calculadoras se guarda en credenciales locales.
