@@ -5,7 +5,7 @@ draft: false
 description: 'Liberacion y publicacion de Web Calculadoras'
 tags: ['Calculadoras']
 coverImage:
-  src: '../assets/pantalla_incio.png'
+  src: '../../assets/pantalla_incio.png'
   alt: 'Pagina de muestras calculadoras'
 ---
 
@@ -22,7 +22,7 @@ Las calculadoras quedan guardadas y accesibles para todos los usuarios.
 
 <!-- Imagen local almacenada en src/assets/ -->
 <!-- Usa una ruta de archivo relativa o un alias de importación -->
-![Pagina de incio](../assets/pantalla_incio.png)
+![Pagina de incio](../../assets/pantalla_incio.png)
 
 [blue]*Existe la verison de guardarlas en local.*
 En esta version la infomracion de las calculadoras se guarda en credenciales locales.
