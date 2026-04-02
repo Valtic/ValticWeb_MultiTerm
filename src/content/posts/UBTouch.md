@@ -2,7 +2,7 @@
 title: "Desarrollo Intermedio en Ubuntu Touch: Apps con QML y JS"
 description: "Aprende a crear una aplicación funcional para UBports utilizando componentes nativos y lógica en JavaScript."
 published: 2026-04-02
-draft: true
+draft: false
 author: "Valtic"
 Image:
     url: "https://ubports.com/web/image/website/10/logo/UBports?unique=82d2d76"
