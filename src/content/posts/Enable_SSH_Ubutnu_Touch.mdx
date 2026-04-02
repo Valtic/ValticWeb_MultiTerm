@@ -1,0 +1,101 @@
+---
+title: "Enable SSH Ubuntu Touch"
+published: 2026-04-02
+draft: false
+description: 'Steps to enable SSH in Ubuntu Touch '
+tags: ['Ubuntu','UbuntuTouch','SSS','UbTouch']
+---
+
+#Manejo del ADB Shell:
+
+El tema de la SSH key ya esta creado en la Tablet y en el PC.
+
+## Tablet
+--------
+'''bash
+sudo service ssh start
+ip address show wlan0
+
+## PC
+--------
+'''bash
+clickable --ssh 192.168.0.xx   ( ip mostrada en la tablet anteriormente)
+
+Te pide contraseña todo el tiempo.
+
+
+
+## PASOS HABILITAR SSH NUEVO TERMINAL ( copia de la web )
+
+[Habilitar SSH UbTouch](https://ubports.gitlab.io/marketing/education/ub-clickable-1/trainingpart1module1.html#_using_ssh)
+
+# 3.2.2. Using SSH
+
+If you don’t want to use a USB cable while developing your app and testing it on your phone, an alternative connection method to ADB is SSH (Secure SHell). This allows Clickable to connect to your phone over Wi-Fi, using an encrypted link.
+
+## Creating an SSH Key Pair
+You need to create an SSH key pair because Ubuntu Touch disables logging in with a password by default. If you already have a key pair, skip the following command; otherwise, run this on your Ubuntu machine:
+
+```bash
+ssh-keygen
+```
+
+The default choice for the file location is fine. You should enter a passphrase that is easy for you to remember and type but not too easy for others to guess.
+
+## Transferring the Public Key to Your Phone
+Transfer the public key part of this key pair to your phone. The easiest way is using ADB if your phone is still connected via USB and has developer mode enabled:
+
+```bash
+adb push ~/.ssh/id_rsa.pub /home/phablet/
+```
+
+## Opening a Shell on Your Phone
+Open a shell on your phone by opening the Terminal app, which asks for your phone’s passcode or passphrase, or by entering the following command on your computer:
+
+```bash
+adb shell
+```
+
+## Configuring SSH Directory and Permissions
+Check whether you already have a configuration directory for SSH:
+
+```bash
+ls .ssh
+```
+If not, create one and set proper permissions:
+
+```bash
+dir /home/phablet/.ssh
+dchmod 700 /home/phablet/.ssh
+```
+Add your public key to the list of authorized keys and set permissions:
+
+```bash
+type /home/phablet/id_rsa.pub >> /home/phablet/.ssh/authorized_keys
+chmod 600 /home/phablet/.ssh/authorized_keys
+```
+
+## Starting the SSH Server
+For Android-based devices:
+```bash
+sudo android-gadget-service enable ssh
+```
+Enter your phone’s passcode or passphrase if prompted.
+For Linux-based devices such as PinePhone:
+```bash
+sudo service ssh start
+```
+
+## Install an Application to the tablet/phone via SSH
+
+Now check your phone’s IP address:
+
+ip address show wlan0
+
+To make Clickable on your computer use SSH to connect to your phone, run it with the following option and use your phone’s IP address:
+
+clickable --ssh 192.168.0.xx
+
+When connecting over SSH, your computer asks you to enter the passphrase of your key pair. After this, the app window appears on your phone. Just swipe it away to close it.
+
+
