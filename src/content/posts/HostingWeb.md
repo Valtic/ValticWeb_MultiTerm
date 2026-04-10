@@ -11,8 +11,7 @@ tags: ['hosting']
 
 ## Sitios de interes
 
-1. - Base de datos MySQL - [db4free.net/](https://db4free.net/) (para pruebas ) 
-   Con Administracion de MyPHPAdmin
+1. - Base de datos MySQL - [Turso](https://turso.tech/)
 
 2. - PHP - [Googiehost.com](https://www.infinityfree.com/)
 
@@ -27,3 +26,9 @@ tags: ['hosting']
 7. - BBDD - [Turso](https://app.turso.tech/)
 
 8. - HTML - [Surge.sh](surge.sh/)
+ 
+9. - Generador de Favicon - [Turso](https://favicon.io)
+     
+10. - Almacen de imagenes - [Imageshack](https://imageshack.com)
+  
+    
